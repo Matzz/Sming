@@ -177,9 +177,6 @@ int add_file(const char* fdir, char* fname) {
 	int size;
 	u8_t *buff = 0;
 	FILE *fp = 0;
-	char *path = 0;
-
-	path = malloc(1024);
 	if (!path) {
 		printf("Unable to malloc %d bytes.\n", 1024);
 	} else {
@@ -188,6 +185,8 @@ int add_file(const char* fdir, char* fname) {
 		if (stat(path, &st) || !S_ISREG(st.st_mode)) {
 			S_DBG("Skipping non-file '%s'.\n", fname);
 		} else {
+			char *path = 0;
+			path = malloc(1024);
 			fp = fopen(path, "rb");
 			if (!fp) {
 				S_DBG("Unable to open '%s'.\n", fname);
@@ -208,11 +207,11 @@ int add_file(const char* fdir, char* fname) {
 					}
 				}
 			}
+			if (path) free(path);
 		}
 	}
 
 	if (buff) free(buff);
-	if (path) free(path);
 	if (fp) fclose(fp);
 
 	return ret;
@@ -287,11 +286,11 @@ int main(int argc, char **argv) {
 			ret = EXIT_FAILURE;
 		} else {
 			DIR *dir;
-			struct dirent *ent;
 			if (!strcmp(folder, "dummy.dir")) {
 				printf("Creating empty filesystem.\n");
 			} else if ((dir = opendir(folder)) != NULL) {
 				printf("Adding files in directory '%s'.\n", folder);
+				struct dirent *ent;
 				while ((ent = readdir(dir)) != NULL) {
 					add_file(folder, ent->d_name);
 				}
