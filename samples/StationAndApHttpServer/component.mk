@@ -1,0 +1,3 @@
+ARDUINO_LIBRARIES := ArduinoJson6
+HWCONFIG := spiffs
+SPIFF_FILES :=
